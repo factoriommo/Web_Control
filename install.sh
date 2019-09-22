@@ -230,7 +230,7 @@ if [ ! -d "$install_dir/" ]; then
 fi
 
 printf "Downloading latest version of Web Control\n";
-wget -q https://github.com/3RaGaming/Web_Control/archive/master.zip -O /tmp/master.zip
+wget -q https://github.com/factoriommo/Web_Control/archive/master.zip -O /tmp/master.zip
 printf "Unzipping\n";
 unzip -u /tmp/master.zip -d /tmp/
 printf "Creating directories\n";

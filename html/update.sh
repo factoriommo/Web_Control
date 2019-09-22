@@ -20,9 +20,9 @@ if [ "${args[0]}" ]; then
 		'1')
 			printf "Detected \"$result\" branch \r\n";
 			printf "Step ${args[0]} - Downloading latest updates \r\n";
-			#wget -q https://github.com/3RaGaming/Web_Control/archive/$result.zip -O $tmp_dir/$result.zip
-			wget -t 1 -T 5 https://github.com/3RaGaming/Web_Control/archive/$result.zip -O $tmp_dir/$result.zip && wget_result=true || wget_result=false
-			#wget -t 1 -T 5 https://gitlab.com/3RaGaming/Web_Control/repository/archive.zip?ref=$result -O $tmp_dir/$result.zip && wget_result=true || wget_result=false
+			#wget -q https://github.com/factoriommo/Web_Control/archive/$result.zip -O $tmp_dir/$result.zip
+			wget -t 1 -T 5 https://github.com/factoriommo/Web_Control/archive/$result.zip -O $tmp_dir/$result.zip && wget_result=true || wget_result=false
+			#wget -t 1 -T 5 https://gitlab.com/factoriommo/Web_Control/repository/archive.zip?ref=$result -O $tmp_dir/$result.zip && wget_result=true || wget_result=false
 			if [ "$wget_result" = true ]; then
 					printf "Download Completed \r\n"
 			else
