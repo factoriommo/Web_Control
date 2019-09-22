@@ -13,7 +13,7 @@ configure the sudoers file to allow www-data access to screen and gcc or else yo
 
 Easy Install! Put this line into your SSH terminal to begin the install:
 
-`bash <(curl -s https://raw.githubusercontent.com/3RaGaming/Web_Control/master/install.sh)`
+`bash <(curl -s https://raw.githubusercontent.com/factoriommo/Web_Control/master/install.sh)`
 
 This will run you through the entire setup process. Once the program is installed on the server, you'll be instructed on how to access the web gui to continue the rest of the configuration.
 
