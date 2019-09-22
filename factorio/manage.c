@@ -671,8 +671,8 @@ char * stop_server(char * name) {
 	int endID;
 	int successful = 0;
 	kill(server->pid, SIGINT); //Send CTRL-C to the server, should close pipes on server end
-	for (int i = 0; i < 10; i++) {
-		//Wait for 10 seconds to see if server closed successfully
+	for (int i = 0; i < 30; i++) {
+		//Wait for 30 seconds to see if server closed successfully
 		endID = waitpid(server->pid, NULL, WNOHANG); //Check if server is closed
 		if (endID == -1) {
 			successful = 1;
