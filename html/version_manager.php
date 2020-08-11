@@ -52,7 +52,7 @@
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$data = curl_exec($ch);
-		preg_match_all('/get-download(.*?)linux64/', $data, $matches);
+		preg_match_all('~/get-download/(.*?)/headless/linux64/~', $data, $matches);
 		return $matches;
 		curl_close($ch);
 	}
@@ -102,8 +102,7 @@
 			return "Install failed. Directory exists.";
 		} else {
 			$urls = array(
-				"https://www.factorio.com/download-headless",
-				"https://www.factorio.com/download-headless/experimental"
+				"https://www.factorio.com/download/archive"
 			);
 			foreach($urls as $url) {
 				//run this script on each url in the array until a match is found
@@ -111,10 +110,8 @@
 				//if a download link is found, iterate the results
 				if(isset($server_matched_versions[0])) {
 					foreach($server_matched_versions[0] as $key => $value) {
-						//find the verion number in the link
-						preg_match('~/(.*?)/~', $server_matched_versions[1][$key], $output);
 						//print_r($output);
-						if($output[1]==$version) {
+						if($server_matched_versions[1][$key]==$version) {
 							$direct_url = "https://www.factorio.com/$value";
 							break 2;
 						}
@@ -386,8 +383,7 @@
 				//print_r($server_installed_versions);
 				echo "<br /><br />";
 				$urls = array(
-					"https://www.factorio.com/download-headless",
-					"https://www.factorio.com/download-headless/experimental"
+					"https://www.factorio.com/download/archive"
 				);
 				foreach($urls as $url) {
 					//run this script on each url in the array
@@ -396,17 +392,18 @@
 					//if a download link is found, iterate the results
 					if(isset($server_matched_versions[0])) {
 						foreach($server_matched_versions[0] as $key => $value) {
+							$version = $server_matched_versions[1][$key];
 							//find the verion number in the link
-							preg_match('~/(.*?)/~', $server_matched_versions[1][$key], $output);
-							//var_dump($output[1]);
 							//get the experimental or stable tag from the url
-							$branch = substr($url, strrpos($url, '/') + 1);
-							if($branch=="download-headless") $branch = "stable";
+							$branch = "stable";
+							if (substr($version, 0, 4) === '0.18') {
+								$branch = 'experimental';
+							}
 							//create array to work with later
-							$server_available_versions[$output[1]] = array(0=>$value,1=>$branch);
+							$server_available_versions[$version] = array(0=>$value,1=>$branch);
 							//add to total versions to compare against installed versions
-							if(!in_array($output[1], $total_versions)) {
-								$total_versions[]=$output[1];
+							if(!in_array($version, $total_versions)) {
+								$total_versions[]=$version;
 							}
 						}
 					}
