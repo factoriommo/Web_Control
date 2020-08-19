@@ -52,7 +52,7 @@
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$data = curl_exec($ch);
-		preg_match_all('~/get-download/(.*?)/headless/linux64/~', $data, $matches);
+		preg_match_all('~/get-download/(.*?)/headless/linux64~', $data, $matches);
 		return $matches;
 		curl_close($ch);
 	}
