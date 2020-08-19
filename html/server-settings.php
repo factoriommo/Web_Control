@@ -74,8 +74,9 @@
 				}
 				if(file_exists($server_settings_path)) {
 					$server_settings = json_decode(file_get_contents($server_settings_path), true);
-					$server_settings['admins'] = json_decode(file_get_contents($server_admins_path), true);
-					$disabled = array('token', 'username', 'password');
+					$admins = json_decode(file_get_contents($server_admins_path), true);
+                    $server_settings['admins'] = $admins ?? [];
+                    $disabled = array('token', 'username', 'password');
 					$replace_this = array('require_user_verification', 'max_upload_in_kilobytes_per_second', 'ignore_player_limit_for_returning_players', 'only_admins_can_pause_the_game', 'afk_autokick_interval', '_');
 					$replace_with_that = array('verify users', 'upload kbps', 'ignore player limit', 'admin pause only', 'afk autokick', ' ');
 					//$doublespan = array('name', 'description', 'tags', 'admins');
