@@ -47,6 +47,7 @@
 				
 				$server_config_path = $server_dir . "config/config.ini";
 				$server_settings_path = $server_dir . "server-settings.json";
+				$server_admins_path = $server_dir . "server-adminlist.json";
 				$server_settings_web_path = $server_dir . "server-settings-web.json";
 				$server_settings_run_path = $server_dir . "running-server-settings.json";
 				if(file_exists($server_settings_web_path)) {
@@ -73,6 +74,7 @@
 				}
 				if(file_exists($server_settings_path)) {
 					$server_settings = json_decode(file_get_contents($server_settings_path), true);
+					$server_settings['admins'] = json_decode(file_get_contents($server_admins_path), true);
 					$disabled = array('token', 'username', 'password');
 					$replace_this = array('require_user_verification', 'max_upload_in_kilobytes_per_second', 'ignore_player_limit_for_returning_players', 'only_admins_can_pause_the_game', 'afk_autokick_interval', '_');
 					$replace_with_that = array('verify users', 'upload kbps', 'ignore player limit', 'admin pause only', 'afk autokick', ' ');
@@ -168,7 +170,19 @@
 			$total_array = array();
 			$ignore_array = array("d","server_select");
 			$settype_string = array("name","description","game_password","allow_commands");
-			$settype_integers = array("max_players","max_upload_in_kilobytes_per_second","autosave_interval","autosave_slots","afk_autokick_interval","minimum_latency_in_ticks");
+			$settype_integers = array(
+			        "max_players",
+                    "max_upload_in_kilobytes_per_second",
+                    "autosave_interval",
+                    "autosave_slots",
+                    "afk_autokick_interval",
+                    "minimum_latency_in_ticks",
+                    "max_upload_slots",
+                    "minimum_segment_size",
+                    "minimum_segment_size_peer_count",
+                    "maximum_segment_size",
+                    "maximum_segment_size_peer_count",
+                );
 			$settype_boolean = array("visibility-public","visibility-lan","require_user_verification","ignore_player_limit_for_returning_players","auto_pause","only_admins_can_pause_the_game","autosave_only_on_server","non_blocking_saving");
 			$settype_array = array("tags","admins");
 			$check_array_admin = array("true","false","admins-only");
@@ -229,6 +243,7 @@
 				$server_dir = $base_dir . $server_select . "/";
 				$server_config_path = $server_dir . "config/config.ini";
 				$server_settings_path = $server_dir . "server-settings.json";
+				$server_admins_path = $server_dir . "server-adminlist.json";
 				$server_settings_web_path = $server_dir . "server-settings-web.json";
 				$server_settings_run_path = $server_dir . "running-server-settings.json";
 				$server_log_loc = $server_dir . "logs/";
@@ -257,6 +272,9 @@
 				if(file_exists($server_settings_path)) {
 					$server_settings = json_decode(file_get_contents("$base_dir$server_select/server-settings.json"), true);
 					foreach($verified_data as $key => $value) {
+					    if ($key === 'admins') {
+					        continue;
+                        }
 						$server_settings[$key] = $verified_data[$key];
 					}
 					$newJsonString = json_encode($server_settings, JSON_PRETTY_PRINT);
@@ -271,6 +289,7 @@
 						file_put_contents($server_log_path, $log_record, FILE_APPEND);
 					}
 					file_put_contents($server_settings_path, $newJsonString);
+					file_put_contents($server_admins_path, json_encode($server_settings['admins'], JSON_PRETTY_PRINT));
 					$output = json_encode("Settings Updated");
 					die($output);
 				} else {
@@ -298,7 +317,18 @@
 					$('[name="'+Form[i].name+'"]').css("background-color", "red");
 					err++;
 				} else {
-					if(Form[i].name == "max_players" || Form[i].name == "max_upload_in_kilobytes_per_second" || Form[i].name == "autosave_interval" || Form[i].name == "autosave_slots" || Form[i].name == "afk_autokick_interval" || Form[i].name == "minimum_latency_in_ticks") {
+					if(Form[i].name == "max_players"
+                        || Form[i].name == "max_upload_in_kilobytes_per_second"
+                        || Form[i].name == "autosave_interval"
+                        || Form[i].name == "autosave_slots"
+                        || Form[i].name == "afk_autokick_interval"
+                        || Form[i].name == "minimum_latency_in_ticks"
+                        || Form[i].name == "max_upload_slots"
+                        || Form[i].name == "minimum_segment_size"
+                        || Form[i].name == "minimum_segment_size_peer_count"
+                        || Form[i].name == "maximum_segment_size"
+                        || Form[i].name == "maximum_segment_size_peer_count"
+                    ) {
 						if(Form[i].value >= 0 ) {
 							console.log('Correct int! [name="'+Form[i].name+'"]' + " - " + Form[i].value);
 							rdy++;
