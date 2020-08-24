@@ -70,7 +70,11 @@ if(isset($_REQUEST['start'])) {
 					file_put_contents($server_settings_path, $newJsonString);
 				}
 			}
-			$output = shell_exec('bash '.$base_dir.'manage.sh "'.$server_select.'" "start" "'.$user_name.'" "'.$server_available_versions[$s_version].'"');
+			$exec_string = 'bash '.$base_dir.'manage.sh "'.$server_select.'" "start" "'.$user_name.'" "'.$server_available_versions[$s_version].'"';
+			if (!empty($server_settings_web['rcon_ip']) && !empty($server_settings_web['rcon_port']) && !empty($server_settings_web['rcon_password'])) {
+			    $exec_string .= ' "'.$server_settings_web['rcon_ip'].'" "'.$server_settings_web['rcon_port'].'" "'.$server_settings_web['rcon_password'].'"';
+            }
+			$output = shell_exec($exec_string);
 			echo $output;
 		} else {
 			die('Missing server-settings.json');
