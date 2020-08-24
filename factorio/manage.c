@@ -609,50 +609,88 @@ char * launch_server(char * name, char ** args, char * logpath) {
 }
 
 //Start a server
+//Input is expected to be a comma separated list of arguments as defined below:
+//Load Latest (true/false) - If true, load the latest save. If false, load provided save
+//OPTIONAL Save Location- If previous argument is "false", contains the path to a save file to load
+//Server Port - The port to load the server on
+//Server Configuration Directory - The path to the directory containing the server configuration files. Required files:
+//      - ${configDir}/config/config.ini
+//      - ${configDir}/server-settings.json
+//Server Executable - Path to the server executable file. This will be provided as the program to run to the execvp command
+//OPTIONAL RCON command - Provided to Factorio's --rcon-bind parameter
+//OPTIONAL* RCON password - (*Required if RCON is enabled) Sets the password for the RCON connection
 char * start_server(char * name, char * input) {
 	char *token;
 	char *delim = ",\n\t";
-	char **args = (char **) malloc(6 * sizeof(char *));
-	char **launchargs = (char **) malloc(10 * sizeof(char *));
+	char **args = (char **) malloc(8 * sizeof(char *));
+	char **launchargs = (char **) malloc(14 * sizeof(char *));
 	int i = 0;
 	int j = 0;
 
+	//Split the input string on commas
 	token = strtok(input, delim);
 	args[i++] = token;
 	while (token != NULL) {
 		token = strtok(NULL, delim);
 		args[i++] = token;
 	}
+	
+	//If there are more than 5 parameters, RCON is enabled
+	bool rconEnabled = i > 5;
 
 	i = 0;
 
 	//Process of setting up the arguments for the execvp() call
-	launchargs[i++] = "TEMP";
+	launchargs[i++] = "TEMP"; //This gets replaced later by the executable file
+	
+	//Either load the latest save or load a specified save
 	if (strcmp(args[j++], "true") == 0) {
 		launchargs[i++] = "--start-server-load-latest";
 	} else {
 		launchargs[i++] = "--start-server";
 		launchargs[i++] = args[j++];
 	}
+	
+	//Set the port
 	launchargs[i++] = "--port";
 	launchargs[i++] = args[j++];
+	
+	//Set the config file
 	launchargs[i++] = "-c";
 	launchargs[i] = (char *) malloc((strlen(args[j]) + strlen("/config/config.ini") + 1) * sizeof(char));
 	strcpy(launchargs[i], args[j]);
 	strcat(launchargs[i], "/config/config.ini");
+	int configAlloc = i;
 	i++;
+	
+	//Set the server settings file
 	launchargs[i++] = "--server-settings";
 	launchargs[i] = (char *) malloc((strlen(args[j]) + strlen("/server-settings.json") + 1) * sizeof(char));
 	strcpy(launchargs[i], args[j]);
 	strcat(launchargs[i], "/server-settings.json\0");
+	int serverSettingAlloc = i;
 	i++;
+	
+	//Set the executable file
+	launchargs[0] = args[j++];
+	
+	//Enable RCON if arguments are present
+	if (rconEnabled) {
+		launchargs[i++] = "--rcon-bind";
+		launchargs[i++] = args[j++];
+		launchargs[i++] = "--rcon-password";
+		launchargs[i++] = args[j++];
+	}
+	
+	//execvp requires the final argument to be NULL
 	launchargs[i] = (char *) NULL;
-	launchargs[0] = args[j + 1];
 
+	//Launch the server
 	char * result = launch_server(name, launchargs, args[j]);
 
-	free(launchargs[i - 1]);
-	free(launchargs[i - 3]);
+	//Free all memory allocations
+	free(launchargs[configAlloc]);
+	free(launchargs[serverSettingAlloc]);
 	free(launchargs);
 	free(args);
 
