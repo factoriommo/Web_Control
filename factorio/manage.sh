@@ -68,9 +68,12 @@ done
 sanitize "${args[3]}";
 program_path="$clean""/bin/x64/factorio";
 
-rcon_ip = "${args[4]}";
-rcon_port = "${args[5]}";
-rcon_password = "${args[6]}";
+sanitize "${args[4]}";
+rcon_ip="$clean";
+sanitize ""${args[5]}"";
+rcon_port="$clean";
+sanitize "${args[6]}";
+rcon_password="$clean";
 
 if [ -z "$server" ]; then
 	echo "Error in input";
@@ -178,7 +181,7 @@ else
 					#sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path}\n"
 				else
 					echo -e "Starting Server. Load Latest. Initiated by $cur_user\r\n" >> $dir_server/screenlog.0 ;
-					if ["$rcon_ip" == false] then
+					if ["$rcon_ip" == false]; then
 					  sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path}\n"
 					else
 					  sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path},${rcon_ip}:${rcon_port},${rcon_password}\n"
