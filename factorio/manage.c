@@ -655,9 +655,11 @@ char * start_server(char * name, char * input) {
 	launchargs[i++] = "--port";
 	launchargs[i++] = args[j++];
 	
+	char *configDirectory = args[j++];
+	
 	//Set the config file
 	launchargs[i++] = "-c";
-	launchargs[i] = (char *) malloc((strlen(args[j]) + strlen("/config/config.ini") + 1) * sizeof(char));
+	launchargs[i] = (char *) malloc((strlen(configDirectory) + strlen("/config/config.ini") + 1) * sizeof(char));
 	strcpy(launchargs[i], args[j]);
 	strcat(launchargs[i], "/config/config.ini");
 	int configAlloc = i;
@@ -665,7 +667,7 @@ char * start_server(char * name, char * input) {
 	
 	//Set the server settings file
 	launchargs[i++] = "--server-settings";
-	launchargs[i] = (char *) malloc((strlen(args[j]) + strlen("/server-settings.json") + 1) * sizeof(char));
+	launchargs[i] = (char *) malloc((strlen(configDirectory) + strlen("/server-settings.json") + 1) * sizeof(char));
 	strcpy(launchargs[i], args[j]);
 	strcat(launchargs[i], "/server-settings.json\0");
 	int serverSettingAlloc = i;
@@ -686,7 +688,7 @@ char * start_server(char * name, char * input) {
 	launchargs[i] = (char *) NULL;
 
 	//Launch the server
-	char * result = launch_server(name, launchargs, args[j]);
+	char * result = launch_server(name, launchargs, configDirectory);
 
 	//Free all memory allocations
 	free(launchargs[configAlloc]);
