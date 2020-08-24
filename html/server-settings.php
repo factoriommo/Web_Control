@@ -72,13 +72,15 @@
 						file_put_contents($server_config_path, $new_config);
 					}
 				}
-				$server_settings_web = array_merge( ['rcon_ip'=>'','rcon_port'=>'', 'rcon_password'=>''], $server_settings_web);
+				$server_settings_web = array_merge(['rcon_ip'=>'','rcon_port'=>'', 'rcon_password'=>''], $server_settings_web);
 				if(file_exists($server_settings_path)) {
 				    $server_default_settings = json_decode(file_get_contents($server_installed_versions[$server_settings_web['version']].'/data/server-settings.example.json'), true);
 				    if (!is_array($server_default_settings)) {
 				        $server_default_settings = [];
                     }
 					$server_settings = array_merge($server_default_settings,json_decode(file_get_contents($server_settings_path), true));
+				    $server_settings = array_merge($server_settings, $server_settings_web);
+				    unset($server_settings['version']);
 					$admins = json_decode(file_get_contents($server_admins_path), true);
                     $server_settings['admins'] = $admins ?? [];
                     $disabled = array('token', 'username', 'password');
