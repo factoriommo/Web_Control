@@ -181,7 +181,7 @@ else
 					#sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path}\n"
 				else
 					echo -e "Starting Server. Load Latest. Initiated by $cur_user\r\n" >> $dir_server/screenlog.0 ;
-					if ["$rcon_ip" == false]; then
+					if [ "$rcon_ip" == "" ]; then
 					  sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path}\n"
 					else
 					  sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path},${rcon_ip}:${rcon_port},${rcon_password}\n"
@@ -208,7 +208,11 @@ else
 						#sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path}\n"
 					else
 						echo -e "Starting Server. Load Latest. Initiated by $cur_user\r\n" >> $dir_server/screenlog.0 ;
-						sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path}\n"
+						if [ "$rcon_ip" == "" ]; then
+              sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path}\n"
+            else
+              sudo -u www-data screen -S manage -X at 0 stuff "${server}\\\$start\\\$true,${port},${dir_server},${program_path},${rcon_ip}:${rcon_port},${rcon_password}\n"
+            fi
 					fi
 				fi
 			fi
