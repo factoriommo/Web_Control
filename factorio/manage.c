@@ -659,15 +659,15 @@ char * start_server(char * name, char * input) {
 	
 	//Set the config file
 	launchargs[i++] = "-c";
-	launchargs[i] = (char *) malloc((strlen(configDirectory) + strlen("/config/config.ini") + 1) * sizeof(char));
+	launchargs[i] = (char *) malloc((strlen(configDirectory) + strlen("/config/config.ini") + 3) * sizeof(char));
 	strcpy(launchargs[i], args[j]);
-	strcat(launchargs[i], "/config/config.ini");
+	strcat(launchargs[i], "/config/config.ini\0");
 	int configAlloc = i;
 	i++;
 	
 	//Set the server settings file
 	launchargs[i++] = "--server-settings";
-	launchargs[i] = (char *) malloc((strlen(configDirectory) + strlen("/server-settings.json") + 1) * sizeof(char));
+	launchargs[i] = (char *) malloc((strlen(configDirectory) + strlen("/server-settings.json") + 3) * sizeof(char));
 	strcpy(launchargs[i], args[j]);
 	strcat(launchargs[i], "/server-settings.json\0");
 	int serverSettingAlloc = i;
