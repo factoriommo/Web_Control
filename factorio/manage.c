@@ -636,7 +636,7 @@ char * start_server(char * name, char * input) {
 	}
 	
 	//If there are more than 5 parameters, RCON is enabled
-	bool rconEnabled = i > 5;
+	int totalArguments = i;
 
 	i = 0;
 
@@ -675,7 +675,7 @@ char * start_server(char * name, char * input) {
 	launchargs[0] = args[j++];
 	
 	//Enable RCON if arguments are present
-	if (rconEnabled) {
+	if (totalArguments > 5) {
 		launchargs[i++] = "--rcon-bind";
 		launchargs[i++] = args[j++];
 		launchargs[i++] = "--rcon-password";
