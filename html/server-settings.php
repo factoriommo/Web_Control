@@ -353,7 +353,7 @@
 							$('[name="'+Form[i].name+'"]').css("background-color", "red");
 							err++;
 						}
-					} else if(Form[i].name == "name" || Form[i].name == "description" || Form[i].name == "tags" || Form[i].name == "admins" || Form[i].name == "game_password" || Form[i].name == "server_select" || Form[i].name == "s_version") {
+					} else if(Form[i].name == "name" || Form[i].name == "description" || Form[i].name == "tags" || Form[i].name == "admins" || Form[i].name == "game_password" || Form[i].name == "server_select" || Form[i].name == "s_version" || Form[i].name == "rcon_ip" || Form[i].name == "rcon_port" || Form[i].name == "rcon_password") {
 						if(Form[i].name == "server_select") {
 							var server_select = Form[i].value;
 						}
