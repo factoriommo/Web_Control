@@ -74,7 +74,7 @@
 				}
 				$server_settings_web = array_merge( ['rcon_ip'=>'','rcon_port'=>'', 'rcon_password'=>''], $server_settings_web);
 				if(file_exists($server_settings_path)) {
-				    $server_default_settings = json_decode(file_get_contents($server_settings_web['version'].'/data/server-settings.example.json'), true);
+				    $server_default_settings = json_decode(file_get_contents($server_installed_versions[$server_settings_web['version']].'/data/server-settings.example.json'), true);
 				    if (!is_array($server_default_settings)) {
 				        $server_default_settings = [];
                     }
