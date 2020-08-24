@@ -72,8 +72,13 @@
 						file_put_contents($server_config_path, $new_config);
 					}
 				}
+				$server_settings_web = array_merge( ['rcon_ip'=>'','rcon_port'=>'', 'rcon_password'=>''], $server_settings_web);
 				if(file_exists($server_settings_path)) {
-					$server_settings = json_decode(file_get_contents($server_settings_path), true);
+				    $server_default_settings = json_decode(file_get_contents($server_settings_web['version']), true);
+				    if (!is_array($server_default_settings)) {
+				        $server_default_settings = [];
+                    }
+					$server_settings = array_merge($server_default_settings,json_decode(file_get_contents($server_settings_path), true));
 					$admins = json_decode(file_get_contents($server_admins_path), true);
                     $server_settings['admins'] = $admins ?? [];
                     $disabled = array('token', 'username', 'password');
@@ -171,6 +176,7 @@
 			$total_array = array();
 			$ignore_array = array("d","server_select");
 			$settype_string = array("name","description","game_password","allow_commands");
+			$rcon_string_fields = ['rcon_ip','rcon_port', 'rcon_password'];
 			$settype_integers = array(
 			        "max_players",
                     "max_upload_in_kilobytes_per_second",
@@ -187,11 +193,15 @@
 			$settype_boolean = array("visibility-public","visibility-lan","require_user_verification","ignore_player_limit_for_returning_players","auto_pause","only_admins_can_pause_the_game","autosave_only_on_server","non_blocking_saving");
 			$settype_array = array("tags","admins");
 			$check_array_admin = array("true","false","admins-only");
+            $rcon_verified_data = [];
 			foreach($_REQUEST as $key => $value) {
 				$clean_key = preg_replace('/[^\da-z]_/i', '', $key);
 				$clean_value = preg_replace(array("/\</", "/\>/", "/\s+/"), array("", "", " "), $value);
 				if(in_array($clean_key, $settype_string) || ($clean_key == "allow_commands" && in_array($clean_value, $check_array_admin))) {
 					$verified_data[$clean_key] = $clean_value;
+					continue;
+				}elseif(in_array($clean_key, $rcon_string_fields)) {
+					$rcon_verified_data[$clean_key] = $clean_value;
 					continue;
 				} elseif(in_array($clean_key, $settype_integers)) {
 					if(is_numeric($clean_value)) {
@@ -253,6 +263,7 @@
 				if(isset($s_version)) {
 					if(isset($server_installed_versions[$s_version])) {
 						$server_settings_web['version']=$s_version;
+						$server_settings_web = array_merge($server_settings_web, $rcon_verified_data);
 						$newJsonString = json_encode($server_settings_web, JSON_PRETTY_PRINT);
 						file_put_contents($server_settings_web_path, $newJsonString);
 						//also want to update the config.ini file
@@ -272,9 +283,11 @@
 				}
 				if(file_exists($server_settings_path)) {
 					$server_settings = json_decode(file_get_contents("$base_dir$server_select/server-settings.json"), true);
+					$admin_list = $server_settings['admins'];
+					unset($server_settings['admins']);
 					foreach($verified_data as $key => $value) {
 					    if ($key === 'admins') {
-					        continue;
+					        $admin_list = $verified_data[$key];
                         }
 						$server_settings[$key] = $verified_data[$key];
 					}
@@ -290,7 +303,7 @@
 						file_put_contents($server_log_path, $log_record, FILE_APPEND);
 					}
 					file_put_contents($server_settings_path, $newJsonString);
-					file_put_contents($server_admins_path, json_encode($server_settings['admins'], JSON_PRETTY_PRINT));
+					file_put_contents($server_admins_path, json_encode($admin_list, JSON_PRETTY_PRINT));
 					$output = json_encode("Settings Updated");
 					die($output);
 				} else {
